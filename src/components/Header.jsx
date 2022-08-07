@@ -29,9 +29,20 @@ const Header = () => {
     p: 2,
   };
 
+  // State variables
   const [open, setOpen] = useState(false);
+  const [transactionType, setTransactionType] = useState("");
+  const [amount, setAmount] = useState("");
+
+  // Functions
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleTransaction = (e) => setTransactionType(e.target.value);
+  const addTransaction = (e) => {
+    e.preventDefault();
+    console.log("Amount", amount, "Transaction type", transactionType);
+  };
+
   return (
     <>
       {/* Modal */}
@@ -50,25 +61,27 @@ const Header = () => {
             <TextField
               fullWidth
               placeholder="Enter amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
               size="small"
               style={{ margin: "10px 0" }}
             />
-            <FormControl component="fieldset">
+            <FormControl>
               <RadioGroup
-                aria-label="transaction"
-                name="transaction"
-                value={"transaction"}
-                // onChange={handleChange}
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="withdrawal"
+                name="radio-buttons-group"
+                onChange={handleTransaction}
               >
+                <FormControlLabel
+                  value="withdrawal"
+                  control={<Radio />}
+                  label="Withdrawal"
+                />
                 <FormControlLabel
                   value="deposit"
                   control={<Radio />}
                   label="Deposit"
-                />
-                <FormControlLabel
-                  value="withdraw"
-                  control={<Radio />}
-                  label="Withdraw"
                 />
               </RadioGroup>
             </FormControl>
@@ -80,7 +93,7 @@ const Header = () => {
                 marginTop: 8,
                 marginRight: 8,
               }}
-              onClick={handleOpen}
+              onClick={addTransaction}
             >
               Save
             </Button>
@@ -88,7 +101,7 @@ const Header = () => {
               variant="text"
               className="text-slate-700 mt-4"
               style={{ color: "rgb(51,65,85)", marginTop: 8, marginLeft: 8 }}
-              onClick={handleOpen}
+              onClick={handleClose}
             >
               Cancel
             </Button>
