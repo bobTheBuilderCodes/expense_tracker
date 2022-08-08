@@ -1,21 +1,5 @@
 import React from "react";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { collection, getDocs } from "firebase/firestore";
-import db from "../firebase/firebase";
-
-export const fetchTransactionsAsync = createAsyncThunk(
-  "fetchTransactions",
-  async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "transactions"));
-      querySnapshot.forEach((snapshot) => {
-        snapshot.doc((doc) => doc.data());
-      });
-    } catch (error) {
-      return error.message;
-    }
-  }
-);
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   allTransactions: [],
@@ -33,22 +17,14 @@ const transactionsSlice = createSlice({
       state.allTransactions.push(action.payload);
     },
     addTransaction(state, action) {
+      if (state.allTransactions.transactionType === "withdrawal") {
+        console.log("It works");
+      } else {
+        console.log("Doesnt work");
+      }
       state.allTransactions.push(action.payload);
     },
     deleteTransaction() {},
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchTransactionsAsync.pending, (state, action) => {
-        state.isLoading = true;
-      })
-      .addCase(fetchTransactionsAsync.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.allTransactions = action.payload;
-      })
-      .addCase(fetchTransactionsAsync.rejected, (state, action) => {
-        state.isLoading = false;
-      });
   },
 });
 
