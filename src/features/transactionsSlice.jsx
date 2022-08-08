@@ -22,7 +22,7 @@ const initialState = {
   isLoading: false,
   error: null,
   totalIncome: 3000,
-  totalExpenses: 3020,
+  totalExpenses: 2800,
 };
 
 const transactionsSlice = createSlice({
@@ -30,9 +30,11 @@ const transactionsSlice = createSlice({
   initialState,
   reducers: {
     getTransaction(state, action) {
-      state.allTransactions = action.payload;
+      state.allTransactions.push(action.payload);
     },
-    addTransaction(state, action) {},
+    addTransaction(state, action) {
+      state.allTransactions.push(action.payload);
+    },
     deleteTransaction() {},
   },
   extraReducers: (builder) => {

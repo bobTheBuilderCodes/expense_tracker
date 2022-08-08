@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   Box,
@@ -6,15 +6,15 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
-  FormLabel,
   Modal,
-  Paper,
   Radio,
   RadioGroup,
   TextField,
-  Typography,
 } from "@mui/material";
 import { Add, Notifications } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import db from "../firebase/firebase";
+import { addTransaction } from "../features/transactionsSlice";
 
 const Header = () => {
   const style = {
@@ -33,13 +33,45 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const [transactionType, setTransactionType] = useState("");
   const [amount, setAmount] = useState("");
+  const [greetUser, setGreetUser] = useState("");
+  const { totalExpenses, totalIncome } = useSelector(
+    (state) => state.transactions
+  );
+
+  const date = new Date();
+  const currentHour = date.getHours();
+
+  function handleGreetings() {
+    if (currentHour > 0 && currentHour < 12) {
+      setGreetUser("morning");
+    } else if (currentHour > 11 && currentHour < 16) {
+      setGreetUser("afternoon");
+    } else {
+      setGreetUser("evening");
+    }
+  }
+
+  useEffect(() => {
+    handleGreetings();
+  }, []);
 
   // Functions
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleTransaction = (e) => setTransactionType(e.target.value);
-  const addTransaction = (e) => {
+  const dispatch = useDispatch();
+
+  const addTransactions = (e) => {
     e.preventDefault();
+    // dispatch(addTransaction({ amount, transactionType, time: "10m ago" }));
+
+    db.collection("transactions").add({
+      amount,
+      transactionType,
+      time: "2m ago",
+    });
+
+    handleClose();
     console.log("Amount", amount, "Transaction type", transactionType);
   };
 
@@ -71,6 +103,7 @@ const Header = () => {
                 aria-labelledby="demo-radio-buttons-group-label"
                 defaultValue="withdrawal"
                 name="radio-buttons-group"
+                value={transactionType}
                 onChange={handleTransaction}
               >
                 <FormControlLabel
@@ -93,7 +126,7 @@ const Header = () => {
                 marginTop: 8,
                 marginRight: 8,
               }}
-              onClick={addTransaction}
+              onClick={addTransactions}
             >
               Save
             </Button>
@@ -136,7 +169,7 @@ const Header = () => {
       {/* Welcome user */}
       <div className="flex justify-between items-center my-4 mx-8">
         <div>
-          <p className="text-gray-400">Good morning 👋🏿</p>
+          <p className="text-gray-400">Good {greetUser} 👋🏿</p>
           <h3 className="font-bold spacing text-gray-600">BobTheBuilder</h3>
         </div>
         <div>
