@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import not_found from "../assets/not_found.svg";
 import Chart from "chart.js/auto";
+import { getDocs, collection } from "firebase/firestore";
 import {
   Table,
   TableBody,
@@ -15,29 +16,46 @@ import { useSelector, useDispatch } from "react-redux";
 import db from "../firebase/firebase";
 import { useEffect } from "react";
 import {
+  addTransaction,
   fetchTransactionsAsync,
   getTransaction,
 } from "../features/transactionsSlice";
 const Graph = () => {
   const { transactions } = useSelector((state) => state);
+  console.log("All Transactions", transactions.allTransactions);
+  console.log("All Transactions redux", typeof transactions.allTransactions);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    db.collection("transactions")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          dispatch(getTransaction(doc.data()));
-        });
-      });
-  }, [dispatch]);
+    const fetchData = async () => {
+      const data = await getDocs(collection(db, "transactions"));
+      const allTransactions = data?.docs.map((doc) =>
+        // dispatch({
+        //   ...doc.data(),
+        //   id: doc.id,
+        // })
+
+        dispatch(getTransaction({ id: doc.id, ...doc.data() }))
+      );
+
+      console.log("allTransactions", allTransactions);
+      console.log("allTransactions type", typeof allTransactions);
+    };
+    fetchData();
+  }, []);
+
+  // useEffect(() => {
+  //   db.collection("transactions").onSnapshot((snapshot) => {
+  //     snapshot.docs.map((doc) => dispatch(getTransaction(doc.data())));
+  //   });
+  // }, [dispatch]);
 
   // useEffect(() => {
   //   dispatch(fetchTransactionsAsync());
   // }, [dispatch]);
 
   return (
-    <div className="h-80 flex flex-col justify-between gap-4 w-100 mx-8 my-4 md:grid grid-cols-1 lg:grid-cols-2 ">
+    <div className="h-80 flex flex-col justify-between gap-4 w-100 mx-8 my-4 md:grid grid-cols-1 lg:grid-cols-2 xl:h-[-120] ">
       <div className="bg-slate-50 flex-1 md:w-100">
         {/* <BarChart /> */}
         <Bar
@@ -83,8 +101,8 @@ const Graph = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {[transactions.allTransactions]?.length > 0 ? (
-              [transactions.allTransactions]?.map(
+            {true ? (
+              transactions.allTransactions?.map(
                 ({ transactionType, amount, time }) => (
                   <TableRow
                     key={Math.random()}
