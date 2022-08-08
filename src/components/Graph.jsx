@@ -22,36 +22,35 @@ import {
 } from "../features/transactionsSlice";
 const Graph = () => {
   const { transactions } = useSelector((state) => state);
-  console.log("All Transactions", transactions.allTransactions);
-  console.log("All Transactions redux", typeof transactions.allTransactions);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getDocs(collection(db, "transactions"));
-      const allTransactions = data?.docs.map((doc) =>
-        // dispatch({
-        //   ...doc.data(),
-        //   id: doc.id,
-        // })
-
-        dispatch(getTransaction({ id: doc.id, ...doc.data() }))
-      );
-
-      console.log("allTransactions", allTransactions);
-      console.log("allTransactions type", typeof allTransactions);
-    };
-    fetchData();
-  }, []);
+    try {
+      const fetchData = async () => {
+        const data = await getDocs(collection(db, "transactions"));
+        const allTransactions = data?.docs.map((doc) =>
+          dispatch(getTransaction({ id: doc.id, ...doc.data() }))
+        );
+      };
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [dispatch]);
 
   // useEffect(() => {
-  //   db.collection("transactions").onSnapshot((snapshot) => {
-  //     snapshot.docs.map((doc) => dispatch(getTransaction(doc.data())));
-  //   });
-  // }, [dispatch]);
+  //   const fetchData = async () => {
+  //     const data = await getDocs(collection(db, "transactions"));
+  //     const allTransactions = data?.docs.map((doc) =>
 
-  // useEffect(() => {
-  //   dispatch(fetchTransactionsAsync());
+  //       dispatch(getTransaction({ id: doc.id, ...doc.data() }))
+  //     );
+
+  //     console.log("allTransactions", allTransactions);
+  //     console.log("allTransactions type", typeof allTransactions);
+  //   };
+  //   fetchData();
   // }, [dispatch]);
 
   return (
@@ -109,7 +108,8 @@ const Graph = () => {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {transactionType}
+                      {transactionType.charAt(0).toUpperCase() +
+                        transactionType.slice(1)}
                     </TableCell>
                     <TableCell style={{ padding: "25px 0px" }} align="center">
                       {amount}

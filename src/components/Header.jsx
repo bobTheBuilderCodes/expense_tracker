@@ -34,6 +34,7 @@ const Header = () => {
   const [transactionType, setTransactionType] = useState("");
   const [amount, setAmount] = useState("");
   const [greetUser, setGreetUser] = useState("");
+  const [isDisabled, setIsDisabled] = useState(true);
   const { totalExpenses, totalIncome } = useSelector(
     (state) => state.transactions
   );
@@ -55,6 +56,13 @@ const Header = () => {
     handleGreetings();
   }, []);
 
+  const handleSaveButtonDisabling = () =>
+    transactionType && amount ? setIsDisabled(false) : setIsDisabled(true);
+
+  useEffect(() => {
+    handleSaveButtonDisabling();
+  }, [transactionType, amount]);
+
   // Functions
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -63,16 +71,16 @@ const Header = () => {
 
   const addTransactions = (e) => {
     e.preventDefault();
-    // dispatch(addTransaction({ amount, transactionType, time: "10m ago" }));
 
+    // Add transactions to database
     db.collection("transactions").add({
       amount,
       transactionType,
       time: "2m ago",
     });
-
     handleClose();
-    console.log("Amount", amount, "Transaction type", transactionType);
+
+    // Do calculations in redux store
   };
 
   return (
@@ -127,6 +135,7 @@ const Header = () => {
                 marginRight: 8,
               }}
               onClick={addTransactions}
+              disabled={isDisabled}
             >
               Save
             </Button>
