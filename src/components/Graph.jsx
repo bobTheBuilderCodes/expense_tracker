@@ -20,6 +20,7 @@ import {
   fetchTransactionsAsync,
   getTransaction,
 } from "../features/transactionsSlice";
+
 const Graph = () => {
   const { transactions } = useSelector((state) => state);
 

@@ -15,8 +15,10 @@ import { Add, Notifications } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import db from "../firebase/firebase";
 import { addTransaction } from "../features/transactionsSlice";
+import * as XLSX from "xlsx";
 
 const Header = () => {
+  const { transactions } = useSelector((state) => state);
   const style = {
     position: "absolute",
     top: "50%",
@@ -81,6 +83,13 @@ const Header = () => {
     handleClose();
 
     // Do calculations in redux store
+  };
+
+  const saveDataAsExcelFile = () => {
+    const excelBook = XLSX.utils.book_new();
+    const excelSheet = XLSX.utils.json_to_sheet(transactions.allTransactions);
+    XLSX.utils.book_append_sheet(excelBook, excelSheet, "My Sheet");
+    XLSX.writeFile(excelBook, "MyTransactions.xlsx");
   };
 
   return (
@@ -191,7 +200,11 @@ const Header = () => {
           >
             Add
           </Button>
-          <Button style={{ color: "rgb(51,65,85)" }} className="ml-2">
+          <Button
+            style={{ color: "rgb(51,65,85)" }}
+            className="ml-2"
+            onClick={saveDataAsExcelFile}
+          >
             Download
           </Button>
         </div>
