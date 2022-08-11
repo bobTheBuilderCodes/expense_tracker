@@ -101,7 +101,7 @@ const Graph = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {true ? (
+            {transactions.allTransactions.length > 0 ? (
               transactions.allTransactions?.map(
                 ({ transactionType, amount, time }) => (
                   <TableRow
