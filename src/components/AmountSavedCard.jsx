@@ -1,23 +1,41 @@
 import { Divider } from "@mui/material";
-import React from "react";
-import { useSelector } from "react-redux";
+import { collection, getDocs } from "firebase/firestore";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import db from "../firebase/firebase";
 
 const AmountSavedCard = () => {
   const { totalIncome, totalExpenses } = useSelector(
     (state) => state.transactions
   );
 
-  const amountSaved = totalIncome - totalExpenses;
+  const dispatch = useDispatch();
+  const amountSaved = +totalIncome?.totalIncome - +totalExpenses?.totalExpense;
+  console.log("Income", Number(totalIncome));
+  console.log("Income", typeof totalIncome);
+  console.log("Expense", +totalExpenses);
+  console.log("Amount saved", amountSaved);
+  useEffect(() => {
+    try {
+      const getAmountSaved = async () => {
+        const data = await getDocs(collection(db, "initialMonies"));
+        data?.docs?.map((doc) => dispatch());
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return (
     <div className="h-42 bg-gray-100 shadow-sm mx-8 my-2 border-2 border-gray-200 rounded-md md:max-w-lg ">
       <div className="p-2">
         <p className="text-grey-400 mb-2">
           {" "}
-          {amountSaved < 0 ? "Owing 😢" : "Amount saved😊"}
+          {+amountSaved < 0 ? "Owing 😢" : "Amount saved😊"}
         </p>
         <h1
           className={`font-bold text-2xl mb-2 ${
-            amountSaved > 0 ? "text-slate-700" : "text-red-500"
+            +amountSaved > 0 ? "text-slate-700" : "text-red-500"
           }`}
         >
           {/* GHC {totalIncome} */}

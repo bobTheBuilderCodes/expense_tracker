@@ -34,7 +34,8 @@ const Header = () => {
   // State variables
   const [open, setOpen] = useState(false);
   const [transactionType, setTransactionType] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
+
   const [greetUser, setGreetUser] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
   const { totalExpenses, totalIncome } = useSelector(
@@ -75,12 +76,15 @@ const Header = () => {
     e.preventDefault();
 
     // Add transactions to database
+    // useEffect(()=>{}, [dispatch])
     db.collection("transactions").add({
       amount,
       transactionType,
       time: "2m ago",
     });
     handleClose();
+
+    dispatch(addTransaction({ transactionType }));
 
     // Do calculations in redux store
   };
