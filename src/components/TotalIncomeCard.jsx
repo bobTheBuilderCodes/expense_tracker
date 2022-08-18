@@ -7,7 +7,7 @@ import db from "../firebase/firebase";
 
 const TotalIncomeCard = () => {
   const { totalIncome } = useSelector((state) => state.transactions);
-  console.log("Total income", totalIncome);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const TotalIncomeCard = () => {
       <div className="p-2">
         <p className="text-grey-400 mb-2">Monthly income</p>
         <h1 className="font-bold text-2xl mb-2 text-slate-700">
-          GHC {totalIncome?.totalIncome}
+          GHC {totalIncome?.totalIncome || 0}
         </h1>
         <Divider />
         <p className="text-grey-400 mt-2 mb-2">

@@ -27,7 +27,7 @@ const TotalExpensesCard = () => {
       <div className="p-2">
         <p className="text-grey-400 mb-2">Monthly expenses</p>
         <h1 className="font-bold text-2xl mb-2 text-slate-700">
-          GHC {totalExpenses?.totalExpense}
+          GHC {totalExpenses?.totalExpense || 0}
         </h1>
         <Divider />
         <p className="text-grey-400 mt-2 mb-2">
