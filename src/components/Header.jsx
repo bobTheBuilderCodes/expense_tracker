@@ -14,13 +14,13 @@ import {
 import { Add, Notifications } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import db from "../firebase/firebase";
-import {
-  addTransaction,
-  getInitialIncome,
-} from "../features/transactionsSlice";
+import { addTransaction } from "../features/transactionsSlice";
 import * as XLSX from "xlsx";
+<<<<<<< HEAD
 import { format } from "date-fns/esm";
 import { collection, addDoc, onSnapshot } from "firebase/firestore";
+=======
+>>>>>>> parent of ba5e7e7 (New changes)
 
 const Header = () => {
   const { transactions } = useSelector((state) => state);
@@ -48,8 +48,6 @@ const Header = () => {
   );
 
   const date = new Date();
-  const timeStamp = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-  let formattedDate = format(date, "dd/MM/yyyy");
   const currentHour = date.getHours();
 
   function handleGreetings() {
@@ -80,6 +78,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const colRef = collection(db, "transactions");
 
+<<<<<<< HEAD
   // Fetch data from backend
   // useEffect(() => {
   //   try {
@@ -103,26 +102,30 @@ const Header = () => {
   //   });
   // }, [dispatch]);
 
+=======
+>>>>>>> parent of ba5e7e7 (New changes)
   const addTransactions = (e) => {
     e.preventDefault();
 
     // Add transactions to database
+<<<<<<< HEAD
     addDoc(colRef, {
       transactionType,
       amount,
       time: `${formattedDate} at ${timeStamp}`,
+=======
+    // useEffect(()=>{}, [dispatch])
+    db.collection("transactions").add({
+      amount,
+      transactionType,
+      time: "2m ago",
+>>>>>>> parent of ba5e7e7 (New changes)
     });
     handleClose();
 
-    if (transactionType === "withdrawal" || transactionType === "Withdrawal") {
-      console.log("Withdrawal is ", +totalIncome?.totalIncome - +amount);
-      const res = +totalIncome?.totalIncome - +amount;
-      console.log("res", res);
-      // totalIncome?.totalIncome -= +amount;
-    } else {
-      const deposit = +totalIncome?.totalIncome + +amount;
-      console.log("Deposit", deposit);
-    }
+    dispatch(addTransaction({ transactionType }));
+
+    // Do calculations in redux store
   };
 
   const saveDataAsExcelFile = () => {

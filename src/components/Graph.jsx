@@ -2,13 +2,7 @@ import React, { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import not_found from "../assets/not_found.svg";
 import Chart from "chart.js/auto";
-import {
-  getDocs,
-  collection,
-  onSnapshot,
-  doc,
-  DocumentSnapshot,
-} from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
 import {
   Table,
   TableBody,
@@ -30,8 +24,8 @@ import {
 const Graph = () => {
   const { transactions } = useSelector((state) => state);
 
-  const allDocs = collection(db, "transactions");
   const dispatch = useDispatch();
+<<<<<<< HEAD
   // useEffect(() => {
   //   try {
   //     const fetchData = async () => {
@@ -66,6 +60,21 @@ const Graph = () => {
     return () => {
       data = false;
     };
+=======
+
+  useEffect(() => {
+    try {
+      const fetchData = async () => {
+        const data = await getDocs(collection(db, "transactions"));
+        const allTransactions = data?.docs.map((doc) =>
+          dispatch(getTransaction({ id: doc.id, ...doc.data() }))
+        );
+      };
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+>>>>>>> parent of ba5e7e7 (New changes)
   }, [dispatch]);
 
   // useEffect(() => {

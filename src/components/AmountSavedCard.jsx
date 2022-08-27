@@ -11,6 +11,20 @@ const AmountSavedCard = () => {
 
   const dispatch = useDispatch();
   const amountSaved = +totalIncome?.totalIncome - +totalExpenses?.totalExpense;
+  console.log("Income", Number(totalIncome));
+  console.log("Income", typeof totalIncome);
+  console.log("Expense", +totalExpenses);
+  console.log("Amount saved", amountSaved);
+  useEffect(() => {
+    try {
+      const getAmountSaved = async () => {
+        const data = await getDocs(collection(db, "initialMonies"));
+        data?.docs?.map((doc) => dispatch());
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   return (
     <div className="h-42 bg-gray-100 shadow-sm mx-8 my-2 border-2 border-gray-200 rounded-md md:max-w-lg ">
@@ -25,7 +39,7 @@ const AmountSavedCard = () => {
           }`}
         >
           {/* GHC {totalIncome} */}
-          GHC {amountSaved || 0}
+          GHC {amountSaved}
         </h1>
         <Divider />
         <p className="text-grey-400 mt-2 mb-2">
