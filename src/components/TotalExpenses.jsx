@@ -1,5 +1,5 @@
 import { Divider } from "@mui/material";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getInitialExpenses } from "../features/transactionsSlice";
@@ -7,34 +7,21 @@ import db from "../firebase/firebase";
 
 const TotalExpensesCard = () => {
   const { totalExpenses } = useSelector((state) => state.transactions);
-  console.log("Total expenses", totalExpenses);
-  console.log("Total expenses", totalExpenses?.totalExpense);
   const dispatch = useDispatch();
   // Fetch initial data from backend
-
-  const colRef = collection(db, "initialMonies");
-  // useEffect(() => {
-  //   try {
-  //     const getIntialExpense = async () => {
-  //       const data = await getDocs(collection(db, "initialMonies"));
-  //       data?.docs?.map((doc) =>
-  //         dispatch(getInitialExpenses({ id: doc.id, ...doc.data() }))
-  //       );
-  //     };
-  //     getIntialExpense();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }, [dispatch]);
-
   useEffect(() => {
-    onSnapshot(colRef, (snapshot) => {
-      snapshot.docs.map((doc) =>
-        dispatch(getInitialExpenses({ id: doc.id, ...doc.data() }))
-      );
-    });
+    try {
+      const getIntialExpense = async () => {
+        const data = await getDocs(collection(db, "initialMonies"));
+        data?.docs?.map((doc) =>
+          dispatch(getInitialExpenses({ id: doc.id, ...doc.data() }))
+        );
+      };
+      getIntialExpense();
+    } catch (error) {
+      console.log(error);
+    }
   }, [dispatch]);
-
   return (
     <div className="h-42 bg-gray-100 shadow-sm mx-8 my-2 border-2 border-gray-200 rounded-md md:max-w-lg ">
       <div className="p-2">
