@@ -14,8 +14,13 @@ import {
 import { Add, Notifications } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import db from "../firebase/firebase";
-import { addTransaction } from "../features/transactionsSlice";
+import {
+  addTransaction,
+  getInitialIncome,
+} from "../features/transactionsSlice";
 import * as XLSX from "xlsx";
+import { format } from "date-fns/esm";
+import { collection, addDoc, onSnapshot } from "firebase/firestore";
 
 const Header = () => {
   const { transactions } = useSelector((state) => state);
@@ -43,6 +48,8 @@ const Header = () => {
   );
 
   const date = new Date();
+  const timeStamp = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  let formattedDate = format(date, "dd/MM/yyyy");
   const currentHour = date.getHours();
 
   function handleGreetings() {
@@ -71,22 +78,51 @@ const Header = () => {
   const handleClose = () => setOpen(false);
   const handleTransaction = (e) => setTransactionType(e.target.value);
   const dispatch = useDispatch();
+  const colRef = collection(db, "transactions");
+
+  // Fetch data from backend
+  // useEffect(() => {
+  //   try {
+  //     const getData = async () => {
+  //       const data = await getDocs(collection(db, "initialMonies"));
+  //       data?.docs.map((doc) =>
+  //         dispatch(getInitialIncome({ id: doc.id, ...doc.data() }))
+  //       );
+  //     };
+  //     getData();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, [dispatch]);
+
+  // useEffect(() => {
+  //   onSnapshot(colRef, (snapshot) => {
+  //     snapshot.docs.map((doc) =>
+  //       dispatch(getInitialIncome({ id: doc.id, ...doc.data() }))
+  //     );
+  //   });
+  // }, [dispatch]);
 
   const addTransactions = (e) => {
     e.preventDefault();
 
     // Add transactions to database
-    // useEffect(()=>{}, [dispatch])
-    db.collection("transactions").add({
-      amount,
+    addDoc(colRef, {
       transactionType,
-      time: "2m ago",
+      amount,
+      time: `${formattedDate} at ${timeStamp}`,
     });
     handleClose();
 
-    dispatch(addTransaction({ transactionType }));
-
-    // Do calculations in redux store
+    if (transactionType === "withdrawal" || transactionType === "Withdrawal") {
+      console.log("Withdrawal is ", +totalIncome?.totalIncome - +amount);
+      const res = +totalIncome?.totalIncome - +amount;
+      console.log("res", res);
+      // totalIncome?.totalIncome -= +amount;
+    } else {
+      const deposit = +totalIncome?.totalIncome + +amount;
+      console.log("Deposit", deposit);
+    }
   };
 
   const saveDataAsExcelFile = () => {
