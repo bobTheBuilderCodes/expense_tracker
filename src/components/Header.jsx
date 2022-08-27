@@ -20,7 +20,7 @@ import {
 } from "../features/transactionsSlice";
 import * as XLSX from "xlsx";
 import { format } from "date-fns/esm";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, addDoc, onSnapshot } from "firebase/firestore";
 
 const Header = () => {
   const { transactions } = useSelector((state) => state);
@@ -78,28 +78,38 @@ const Header = () => {
   const handleClose = () => setOpen(false);
   const handleTransaction = (e) => setTransactionType(e.target.value);
   const dispatch = useDispatch();
+  const colRef = collection(db, "transactions");
 
-  useEffect(() => {
-    try {
-      const getData = async () => {
-        const data = await getDocs(collection(db, "initialMonies"));
-        data?.docs.map((doc) =>
-          dispatch(getInitialIncome({ id: doc.id, ...doc.data() }))
-        );
-      };
-      getData();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [dispatch]);
+  // Fetch data from backend
+  // useEffect(() => {
+  //   try {
+  //     const getData = async () => {
+  //       const data = await getDocs(collection(db, "initialMonies"));
+  //       data?.docs.map((doc) =>
+  //         dispatch(getInitialIncome({ id: doc.id, ...doc.data() }))
+  //       );
+  //     };
+  //     getData();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, [dispatch]);
+
+  // useEffect(() => {
+  //   onSnapshot(colRef, (snapshot) => {
+  //     snapshot.docs.map((doc) =>
+  //       dispatch(getInitialIncome({ id: doc.id, ...doc.data() }))
+  //     );
+  //   });
+  // }, [dispatch]);
 
   const addTransactions = (e) => {
     e.preventDefault();
 
     // Add transactions to database
-    db.collection("transactions").add({
-      amount,
+    addDoc(colRef, {
       transactionType,
+      amount,
       time: `${formattedDate} at ${timeStamp}`,
     });
     handleClose();

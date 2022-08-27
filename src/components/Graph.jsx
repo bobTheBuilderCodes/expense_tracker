@@ -32,18 +32,40 @@ const Graph = () => {
 
   const allDocs = collection(db, "transactions");
   const dispatch = useDispatch();
+  // useEffect(() => {
+  //   try {
+  //     const fetchData = async () => {
+  //       const data = await getDocs(allDocs);
+  //       data?.docs
+  //         // .orderBy("time", "asc")
+  //         .map((doc) =>
+  //           dispatch(getTransaction({ id: doc.id, ...doc.data() }))
+  //         );
+  //     };
+  //     fetchData();
+  //   } catch (error) {}
+  // }, [dispatch]);
+
+  // useEffect(() => {
+  //   onSnapshot(allDocs, (snapshot) => {
+  //     snapshot.docs.map((doc) =>
+  //       dispatch(getTransaction({ id: doc.id, ...doc.data() }))
+  //     );
+  //   });
+  // }, [dispatch]);
+
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        const data = await getDocs(allDocs);
-        data?.docs
-          // .orderBy("time", "asc")
-          .map((doc) =>
-            dispatch(getTransaction({ id: doc.id, ...doc.data() }))
-          );
-      };
-      fetchData();
-    } catch (error) {}
+    let data = true;
+    onSnapshot(allDocs, (snapshot) => {
+      data &&
+        snapshot.docs.map((doc) =>
+          dispatch(getTransaction({ id: doc.id, ...doc.data() }))
+        );
+    });
+
+    return () => {
+      data = false;
+    };
   }, [dispatch]);
 
   // useEffect(() => {
@@ -109,6 +131,7 @@ const Graph = () => {
           <TableBody>
             {transactions.allTransactions.length > 0 ? (
               transactions.allTransactions?.map(
+                // [...new Set(transactions?.allTransactions)]?.map(
                 ({ transactionType, amount, time }) => (
                   <TableRow
                     key={Math.random()}
