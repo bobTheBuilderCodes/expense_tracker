@@ -11,10 +11,7 @@ const AmountSavedCard = () => {
 
   const dispatch = useDispatch();
   const amountSaved = +totalIncome?.totalIncome - +totalExpenses?.totalExpense;
-  console.log("Income", Number(totalIncome));
-  console.log("Income", typeof totalIncome);
-  console.log("Expense", +totalExpenses);
-  console.log("Amount saved", amountSaved);
+
   useEffect(() => {
     try {
       const getAmountSaved = async () => {
@@ -39,7 +36,7 @@ const AmountSavedCard = () => {
           }`}
         >
           {/* GHC {totalIncome} */}
-          GHC {amountSaved}
+          GHC 0
         </h1>
         <Divider />
         <p className="text-grey-400 mt-2 mb-2">
